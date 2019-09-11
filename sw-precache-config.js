@@ -13,6 +13,7 @@
 module.exports = {
   staticFileGlobs: [
     'bower_components/webcomponentsjs/webcomponents-loader.js',
+    'bower_components/jsqrcode/dist/jsqrcode.js',
     'manifest.json',
   ],
   runtimeCaching: [
