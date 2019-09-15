@@ -1,0 +1,68 @@
+<link rel="import" href="../bower_components/polymer/polymer-element.html">
+
+<dom-module id="web-nfc">
+  <script>
+    class WebNfc extends Polymer.Element {
+      static get is() {
+        return 'web-nfc';
+      }
+
+      static get properties() {
+        return {
+          supported: {
+            type: Boolean,
+            notify: true,
+            reflectToAttribute: true,
+            value: 'nfc' in navigator
+          },
+          input: {
+            type: Object,
+            notify: true,
+            reflectToAttribute: true
+          },
+          output: {
+            type: Object,
+            notify: true,
+            reflectToAttribute: true
+          },
+          debug: {
+            type: Boolean,
+            value: false
+          }
+        };
+      }
+
+      ready() {
+        super.ready();
+        console.log('We are inside ready()');
+        if (this.supported) {
+          navigator.nfc.watch((message) => {
+            console.log('message', message);
+            for (let record of message.records) {
+              console.log('record', record);
+              console.log('record.data', record.data);
+              console.log('this.output before', this.output);
+              this.output = record.data;
+              console.log('this.output after', this.output);
+            }
+          })
+        }
+      }
+
+      write() {
+        console.log('We are inside write()');
+        console.log('this.input', this.input);
+        if (this.supported) {
+          //navigator.nfc.push(JSON.stringify(this.input)).then(() => {
+          navigator.nfc.push(this.input).then(() => {
+            console.log("Message pushed.");
+          }).catch((error) => {
+            console.log("Push failed :-( try again.", error);
+          });
+        }
+      }
+    }
+
+    window.customElements.define(WebNfc.is, WebNfc);
+  </script>
+</dom-module>
