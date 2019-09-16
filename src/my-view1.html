@@ -9,7 +9,18 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 -->
 
 <link rel="import" href="../bower_components/polymer/polymer-element.html">
+<link rel="import" href="../bower_components/paper-input/paper-input.html">
+<link rel="import" href="../bower_components/paper-button/paper-button.html">
+<link rel="import" href="../bower_components/app-media/app-media-devices.html">
+<link rel="import" href="../bower_components/app-media/app-media-stream.html">
+<link rel="import" href="../bower_components/app-media/app-media-video.html">
+<link rel="import" href="../bower_components/app-media/app-media-image-capture.html">
+<link rel="import" href="../bower_components/granite-qrcode-decoder/granite-qrcode-decoder.html">
+<link rel="import" href="web-nfc.html">
 <link rel="import" href="shared-styles.html">
+
+<!-- <script src="https://unpkg.com/webrtc-adapter/out/adapter.js"></script> -->
+<!-- <script src="https://unpkg.com/image-capture/lib/imagecapture.js"></script> -->
 
 <dom-module id="my-view1">
   <template>
@@ -19,19 +30,93 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
         padding: 10px;
       }
+
+      paper-button {
+        background: var(--app-primary-color);
+        color: white;
+      }
+
+      app-media-video {
+        width: 256px;
+        height: 256px;
+      }
     </style>
 
     <div class="card">
-      <div class="circle">1</div>
-      <h1>View One</h1>
-      <p>Ut labores minimum atomorum pro. Laudem tibique ut has.</p>
-      <p>Lorem ipsum dolor sit amet, per in nusquam nominavi periculis, sit elit oportere ea.Lorem ipsum dolor sit amet, per in nusquam nominavi periculis, sit elit oportere ea.Cu mei vide viris gloriatur, at populo eripuit sit.</p>
+      <paper-button
+        on-click="switchCamera">
+          Switch camera
+      </paper-button>
+
+      <app-media-devices
+        id="device"
+        kind="videoinput"
+        selected-device="{{device}}">
+      </app-media-devices>
+
+      <app-media-stream
+        video-device="[[device]]"
+        video-constraints='{"facingMode": {"ideal": "environment"}}'
+        stream="{{stream}}"
+        active>
+      </app-media-stream>
+
+      <app-media-video
+        source="[[stream]]"
+        on-click="takePhoto"
+        autoplay
+        muted>
+      </app-media-video>
+
+      <app-media-image-capture
+        id="imageCapture"
+        stream="[[stream]]"
+        focus-mode="single-shot"
+        last-photo="{{blob}}">
+      </app-media-image-capture>
+
+      <granite-qrcode-decoder
+        blob="[[blob]]"
+        debug
+        last-decoded-data="{{data}}">
+      </granite-qrcode-decoder>
+
+      <paper-input
+        label="Decoded QR code data"
+        value="{{data}}">
+      </paper-input>
+
+      <p>WebNFC API supported: [[supported]]</p>
+
+      <web-nfc
+        id="nfc"
+        supported="{{supported}}"
+        input="[[data]]">
+      </web-nfc>
+
+      <paper-button
+        on-click="writeToNfc"
+        disabled="[[!supported]]">
+          Write
+      </paper-button>
     </div>
   </template>
 
   <script>
     class MyView1 extends Polymer.Element {
       static get is() { return 'my-view1'; }
+
+      writeToNfc() {
+        this.shadowRoot.getElementById('nfc').write();
+      }
+
+      takePhoto() {
+        this.shadowRoot.getElementById('imageCapture').takePhoto();
+      }
+
+      switchCamera() {
+        this.shadowRoot.getElementById('device').selectNextDevice();
+      }
     }
 
     window.customElements.define(MyView1.is, MyView1);

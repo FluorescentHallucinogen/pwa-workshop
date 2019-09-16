@@ -22,7 +22,8 @@
     "granite-js-dependencies-grabber": "LostInBrittany/granite-js-dependencies-grabber#1.1.0",
     "device-orientation": "abdonrd/device-orientation#^2.0.0",
     "geo-location": "ebidel/geo-location#^2.0.0",
-    "google-map": "GoogleWebComponents/google-map#^2.0.0"
+    "google-map": "GoogleWebComponents/google-map#^2.0.0",
+    "web-share": "ProgressiveWebComponents/web-share"
   },
   "resolutions": {
     "polymer": "^2.0.0"

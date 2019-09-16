@@ -1,0 +1,69 @@
+<!--
+@license
+Copyright (c) 2016 The Polymer Project Authors. All rights reserved.
+This code may only be used under the BSD style license found at http://polymer.github.io/LICENSE.txt
+The complete set of authors may be found at http://polymer.github.io/AUTHORS.txt
+The complete set of contributors may be found at http://polymer.github.io/CONTRIBUTORS.txt
+Code distributed by Google as part of the polymer project is also
+subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
+-->
+
+<link rel="import" href="../bower_components/polymer/polymer-element.html">
+<link rel="import" href="../bower_components/geo-location/geo-location.html">
+<link rel="import" href="../bower_components/google-map/google-map.html">
+<link rel="import" href="shared-styles.html">
+
+<dom-module id="my-view4">
+  <template>
+    <style include="shared-styles">
+      :host {
+        display: block;
+
+        padding: 10px;
+      }
+
+      google-map {
+        height: 256px;
+      }
+    </style>
+
+    <div class="card">
+      <geo-location
+        watch-pos
+        high-accuracy
+        timeout="1000"
+        position="{{position}}">
+      </geo-location>
+
+      <ul>
+        <li>Timestamp: [[position.timestamp]]</li>
+        <li>Latitude: [[position.coords.latitude]]</li>
+        <li>Longitude: [[position.coords.longitude]]</li>
+        <li>Altitude: [[position.coords.altitude]]</li>
+        <li>Accuracy: [[position.coords.accuracy]]</li>
+        <li>Altitude accuracy: [[position.coords.altitudeAccuracy]]</li>
+        <li>Heading: [[position.coords.heading]]</li>
+        <li>Speed: [[position.coords.speed]]</li>
+      </ul>
+
+      <google-map
+        latitude="[[position.coords.latitude]]"
+        longitude="[[position.coords.longitude]]"
+        api-key="AIzaSyBYrcIBG3F24bZD2zgONLqjlku6kdyCkAI">
+          <google-map-marker
+            slot="markers"
+            latitude="[[position.coords.latitude]]"
+            longitude="[[position.coords.longitude]]">
+          </google-map-marker>
+      </google-map>
+    </div>
+  </template>
+
+  <script>
+    class MyView4 extends Polymer.Element {
+      static get is() { return 'my-view4'; }
+    }
+
+    window.customElements.define(MyView4.is, MyView4);
+  </script>
+</dom-module>

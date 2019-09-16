@@ -9,6 +9,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 -->
 
 <link rel="import" href="../bower_components/polymer/polymer-element.html">
+<link rel="import" href="../bower_components/device-orientation/device-orientation.html">
+<link rel="import" href="../bower_components/device-orientation/demo/device-orientation/demo-cube.html">
 <link rel="import" href="shared-styles.html">
 
 <dom-module id="my-view3">
@@ -22,10 +24,22 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     </style>
 
     <div class="card">
-      <div class="circle">3</div>
-      <h1>View Three</h1>
-      <p>Modus commodo minimum eum te, vero utinam assueverit per eu.</p>
-      <p>Ea duis bonorum nec, falli paulo aliquid ei eum.Has at minim mucius aliquam, est id tempor laoreet.Pro saepe pertinax ei, ad pri animal labores suscipiantur.</p>
+      <device-orientation
+        api-supported="{{apiSupported}}"
+        sensors-available="{{sensorsAvailable}}"
+        orientation="{{orientation}}">
+      </device-orientation>
+
+      <ul>
+        <li>API supported: [[apiSupported]]</li>
+        <li>Sensors available: [[sensorsAvailable]]</li>
+        <li>Absolute: [[orientation.absolute]]</li>
+        <li>Alpha: [[orientation.alpha]]</li>
+        <li>Beta: [[orientation.beta]]</li>
+        <li>Gamma: [[orientation.gamma]]</li>
+      </ul>
+
+      <demo-cube orientation="[[orientation]]"></demo-cube>
     </div>
   </template>
 
