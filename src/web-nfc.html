@@ -11,23 +11,36 @@
         return {
           supported: {
             type: Boolean,
+            value: 'NDEFReader' in window && 'NDEFWriter' in window,
             notify: true,
-            reflectToAttribute: true,
-            value: 'nfc' in navigator
+            reflectToAttribute: true
           },
           input: {
             type: Object,
-            notify: true,
-            reflectToAttribute: true
+            notify: true
+            //reflectToAttribute: true
           },
           output: {
             type: Object,
-            notify: true,
-            reflectToAttribute: true
+            notify: true
+            //reflectToAttribute: true
           },
+          /*
+          reader: {
+            type: Object,
+            notify: true
+            //reflectToAttribute: true
+          },
+          writer: {
+            type: Object,
+            notify: true
+            //reflectToAttribute: true
+          },
+          */
           debug: {
             type: Boolean,
-            value: false
+            value: false,
+            notify: true
           }
         };
       }
@@ -35,30 +48,51 @@
       ready() {
         super.ready();
         console.log('We are inside ready()');
+        this.read();
+      }
+
+      async read() {
+        console.log('We are inside read()');
+        console.log('this.supported', this.supported);
         if (this.supported) {
-          navigator.nfc.watch((message) => {
+          const reader = new NDEFReader();
+          console.log('reader', reader);
+          console.log('reader.scan', reader.scan);
+          await reader.scan();
+          reader.onreading = event => {
+            console.log('event', event);
+            const message = event.message;
             console.log('message', message);
-            for (let record of message.records) {
+            const records = message.records;
+            console.log('records', records);
+            for (const record of records) {
               console.log('record', record);
-              console.log('record.data', record.data);
-              console.log('this.output before', this.output);
-              this.output = record.data;
-              console.log('this.output after', this.output);
+              const data = record.data;
+              console.log('data', data);
+              const decoder = new TextDecoder();
+              const decodedData = decoder.decode(data);
+              console.log('decodedData', decodedData);
+              this.output = decodedData;
+              console.log('this.output', this.output);
             }
-          })
+          }
         }
       }
 
       write() {
         console.log('We are inside write()');
-        console.log('this.input', this.input);
+        console.log('this.supported', this.supported);
         if (this.supported) {
-          //navigator.nfc.push(JSON.stringify(this.input)).then(() => {
-          navigator.nfc.push(this.input).then(() => {
-            console.log("Message pushed.");
-          }).catch((error) => {
-            console.log("Push failed :-( try again.", error);
-          });
+          const writer = new NDEFWriter();
+          console.log('writer', writer);
+          console.log('this.input', this.input);
+            writer.push(
+              this.input
+            ).then(() => {
+              console.log('Message pushed.');
+            }).catch((error) => {
+              console.error(`Push failed :-( try again: ${error}.`);
+            });
         }
       }
     }
